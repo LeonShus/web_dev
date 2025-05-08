@@ -1,4 +1,3 @@
-
 import { db } from "@/drizzle/db";
 import { CourseSectionTable } from "@/drizzle/schema";
 import { revalidateCourseSectionCache } from "./cache/cache";
@@ -66,4 +65,26 @@ export async function deleteSection(id: string) {
   });
 
   return deletedSection;
+}
+
+export async function updateSectionOrders(sectionIds: string[]) {
+  const sections = await Promise.all(
+    sectionIds.map((id, index) =>
+      db
+        .update(CourseSectionTable)
+        .set({ order: index })
+        .where(eq(CourseSectionTable.id, id))
+        .returning({
+          courseId: CourseSectionTable.courseId,
+          id: CourseSectionTable.id,
+        })
+    )
+  );
+
+  sections.flat().forEach(({ id, courseId }) => {
+    revalidateCourseSectionCache({
+      courseId,
+      id,
+    });
+  });
 }

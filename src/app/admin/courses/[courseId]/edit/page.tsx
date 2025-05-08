@@ -1,17 +1,24 @@
+import { ActionButton } from "@/components/ActionButton";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/drizzle/db";
 import { CourseSectionTable, CourseTable, LessonTable } from "@/drizzle/schema";
 import { CourseForm } from "@/features/courses/components/CourseForm";
 import { getCourseIdTag } from "@/features/courses/db/cache/courses";
+import { deleteSection } from "@/features/courseSections/actions/sections";
 import { SectionFormDialog } from "@/features/courseSections/components/SectionFormDialog";
-import { getCourseSectionIdTag } from "@/features/courseSections/db/cache/cache";
+import { SortableSectionList } from "@/features/courseSections/components/SortableSectionList";
+import {
+  getCourseSectionGlobalTag,
+  getCourseSectionIdTag,
+} from "@/features/courseSections/db/cache/cache";
 import { getLessonCourseTag } from "@/features/lessons/db/cache/cache";
+import { cn } from "@/lib/utils";
 import { asc, eq } from "drizzle-orm";
-import { PlusIcon } from "lucide-react";
+import { EyeClosedIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { notFound } from "next/navigation";
 
@@ -25,6 +32,8 @@ export default async function EditCoursePagew({
   const course = await getCourse(courseId);
 
   if (!course) return notFound();
+
+  console.log("course", course);
 
   return (
     <div className="m-auto container my-6">
@@ -49,6 +58,12 @@ export default async function EditCoursePagew({
                 </DialogTrigger>
               </SectionFormDialog>
             </CardHeader>
+            <CardContent>
+              <SortableSectionList
+                sections={course.courseSections}
+                courseId={course.id}
+              />
+            </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="details">
@@ -69,7 +84,8 @@ async function getCourse(id: string) {
   cacheTag(
     getCourseIdTag(id),
     getCourseSectionIdTag(id),
-    getLessonCourseTag(id)
+    getLessonCourseTag(id),
+    getCourseSectionGlobalTag()
   );
 
   return db.query.CourseTable.findFirst({
