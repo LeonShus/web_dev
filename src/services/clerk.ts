@@ -27,7 +27,7 @@ export async function getCurrentUser({ allData = false } = {}) {
     role: sessionClaims?.role,
     user:
       allData && sessionClaims?.dbId !== null
-        ? await getUser(sessionClaims?.dbId)
+        ? await getUser(sessionClaims?.dbId as string)
         : undefined,
     redirectToSignIn,
   };

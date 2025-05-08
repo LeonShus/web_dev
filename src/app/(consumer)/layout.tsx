@@ -20,9 +20,9 @@ export default function ConsumerLayout({
 function Navbar() {
   return (
     <header className="flex h-12 shadow bg-background z-10">
-      <nav className="flex gap-4 container">
+      <nav className="flex gap-4 justify-between w-full px-5">
         <Link
-          className="mr-auto text-lg hover:underline flex items-center px-2"
+          className="mr-auto text-lg hover:underline flex items-center "
           href="/"
         >
           Web Dev
@@ -68,9 +68,9 @@ function Navbar() {
 }
 
 async function AdminLink() {
-  const user = await getCurrentUser({ allData: true });
+  const user = await getCurrentUser();
 
-  console.log("user", user?.user?.name);
+  console.log("user", user?.user, user);
 
   if (!canAccessAdminPages({ role: user.role })) {
     return null;
