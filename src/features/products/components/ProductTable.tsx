@@ -64,10 +64,7 @@ export function ProductTable({
                       singular: "course",
                       plural: "courses",
                     })}{" "}
-                    •{" "}
-                    {formatPrice(product.priceInDollars, {
-                      showZeroAsNumber: true,
-                    })}
+                    • {formatPrice(product.priceInDollars, true)}
                   </div>
                 </div>
               </div>

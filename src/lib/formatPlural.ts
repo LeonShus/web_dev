@@ -8,7 +8,7 @@ export function formatPlural(
   return incudeCount ? `${count} ${word}` : word;
 }
 
-export function formatPrice(amount: number, { showZeroAsNumber = false }) {
+export function formatPrice(amount: number, showZeroAsNumber = false) {
   const formatter = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: "USD",
