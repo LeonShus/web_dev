@@ -53,7 +53,7 @@ export function ProductCard({
 
 async function Price({ price }: { price: number }) {
   const coupon = await getUserCoupon()
-  if (price === 0 || coupon == null) {
+  if (price === 0 || !coupon) {
     return formatPrice(price)
   }
 

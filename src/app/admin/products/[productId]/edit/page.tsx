@@ -16,7 +16,7 @@ export default async function EditProductPage({
   const { productId } = await params
   const product = await getProduct(productId)
 
-  if (product == null) return notFound()
+  if (!product) return notFound()
 
   return (
     <div className="container my-6 mx-auto">

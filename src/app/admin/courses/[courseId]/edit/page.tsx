@@ -35,7 +35,6 @@ export default async function EditCoursePagew({
 
   if (!course) return notFound();
 
-  console.log("course", course);
 
   return (
     <div className="m-auto container my-6">

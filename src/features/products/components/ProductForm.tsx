@@ -61,7 +61,7 @@ export function ProductForm({
 
   async function onSubmit(values: z.infer<typeof productSchema>) {
     const action =
-      product == null ? createProduct : updateProduct.bind(null, product.id)
+      !product ? createProduct : updateProduct.bind(null, product.id)
     const data = await action(values)
     toastAction({ data: data })
   }

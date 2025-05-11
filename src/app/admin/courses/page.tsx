@@ -20,8 +20,6 @@ import { Suspense } from "react";
 export default async function CoursesPage() {
   const courses = await getCourses();
 
-  console.log("courses", courses);
-
   return (
     <div className="mx-auto container my-6">
         <PageHeader className="justify-between" title="TITLE">

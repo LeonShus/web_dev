@@ -74,7 +74,6 @@ export function CourseTable({
                     variant={"destructiveOutline"}
                     requireAreYouSure
                     action={async () => {
-                      console.log('CLEC')
                       return await deleteCourse(course.id);
                     }}
                   >

@@ -7,6 +7,7 @@ import {
 import { revalidateProductCache } from "./cache";
 import { and, eq, isNull } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
+import { getPurchaseUserTag } from "@/features/purchases/db/cache/cache";
 
 export async function userOwnsProduct({
   userId,
@@ -16,7 +17,7 @@ export async function userOwnsProduct({
   productId: string;
 }) {
   "use cache";
-  // cacheTag(getPurchaseUserTag(userId))
+  cacheTag(getPurchaseUserTag(userId));
 
   const existingPurchase = await db.query.PurchaseTable.findFirst({
     where: and(
@@ -26,7 +27,7 @@ export async function userOwnsProduct({
     ),
   });
 
-  return existingPurchase != null;
+  return Boolean(existingPurchase);
 }
 
 export async function insertProduct(
@@ -37,7 +38,7 @@ export async function insertProduct(
       .insert(ProductTable)
       .values(data)
       .returning();
-    if (newProduct == null) {
+    if (!newProduct) {
       trx.rollback();
       throw new Error("Failed to create product");
     }
@@ -67,7 +68,7 @@ export async function updateProduct(
       .set(data)
       .where(eq(ProductTable.id, id))
       .returning();
-    if (updatedProduct == null) {
+    if (!updatedProduct) {
       trx.rollback();
       throw new Error("Failed to create product");
     }
@@ -96,7 +97,7 @@ export async function deleteProduct(id: string) {
     .delete(ProductTable)
     .where(eq(ProductTable.id, id))
     .returning();
-  if (deletedProduct == null) throw new Error("Failed to delete product");
+  if (!deletedProduct) throw new Error("Failed to delete product");
 
   revalidateProductCache(deletedProduct.id);
 

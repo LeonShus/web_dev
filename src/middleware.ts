@@ -44,13 +44,15 @@ export default clerkMiddleware(async (auth, req) => {
   );
 
   if (decision.isDenied()) {
-    return forbidden();
+    return new NextResponse(null, { status: 401 });
   }
 
   if (isAdminRoute(req)) {
     const user = await auth.protect();
 
-    if (user.sessionClaims.role !== "admin") return notFound();
+    if (user.sessionClaims.role !== "admin") {
+      return new NextResponse(null, { status: 404 });
+    }
   }
 
   if (!isPublicRoute(req)) {

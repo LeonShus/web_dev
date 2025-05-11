@@ -34,9 +34,7 @@ export function CourseForm({
   const onSubmit = async (values: z.infer<typeof courseSchema>) => {
     const action = course ? updateCourse.bind(null, course.id) : createCourse;
     const data = await action(values);
-
-    console.log(data);
-
+  
     toastAction({ data });
   };
 

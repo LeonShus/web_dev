@@ -54,7 +54,7 @@ export function MultiSelect<Option>({
             {selectedValues.length > 0 ? (
               selectedValues.map(value => {
                 const option = options.find(o => getValue(o) === value)
-                if (option == null) return null
+                if (!option) return null
 
                 return (
                   <Badge key={getValue(option)} variant="outline">

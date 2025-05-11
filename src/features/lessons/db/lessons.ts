@@ -23,11 +23,11 @@ export async function insertLesson(data: typeof LessonTable.$inferInsert) {
       }),
     ])
 
-    if (section == null) return trx.rollback()
+    if (!section) return trx.rollback()
 
     return [newLesson, section.courseId]
   })
-  if (newLesson == null) throw new Error("Failed to create lesson")
+  if (!newLesson) throw new Error("Failed to create lesson")
 
   revalidateLessonCache({ courseId, id: newLesson.id })
 
@@ -45,9 +45,9 @@ export async function updateLesson(
     })
 
     if (
-      data.sectionId != null &&
+      data.sectionId &&
       currentLesson?.sectionId !== data.sectionId &&
-      data.order == null
+      !data.order
     ) {
       data.order = await getNextCourseLessonOrder(data.sectionId)
     }
@@ -57,7 +57,7 @@ export async function updateLesson(
       .set(data)
       .where(eq(LessonTable.id, id))
       .returning()
-    if (updatedLesson == null) {
+    if (!updatedLesson) {
       trx.rollback()
       throw new Error("Failed to update lesson")
     }
@@ -67,7 +67,7 @@ export async function updateLesson(
       where: eq(CourseSectionTable.id, updatedLesson.sectionId),
     })
 
-    if (section == null) return trx.rollback()
+    if (!section) return trx.rollback()
 
     return [updatedLesson, section.courseId]
   })
@@ -83,7 +83,7 @@ export async function deleteLesson(id: string) {
       .delete(LessonTable)
       .where(eq(LessonTable.id, id))
       .returning()
-    if (deletedLesson == null) {
+    if (!deletedLesson) {
       trx.rollback()
       throw new Error("Failed to delete lesson")
     }
@@ -93,7 +93,7 @@ export async function deleteLesson(id: string) {
       where: ({ id }, { eq }) => eq(id, deletedLesson.sectionId),
     })
 
-    if (section == null) return trx.rollback()
+    if (!section) return trx.rollback()
 
     return [deletedLesson, section.courseId]
   })
@@ -121,14 +121,14 @@ export async function updateLessonOrders(lessonIds: string[]) {
       )
     )
     const sectionId = lessons[0]?.[0]?.sectionId
-    if (sectionId == null) return trx.rollback()
+    if (!sectionId) return trx.rollback()
 
     const section = await trx.query.CourseSectionTable.findFirst({
       columns: { courseId: true },
       where: ({ id }, { eq }) => eq(id, sectionId),
     })
 
-    if (section == null) return trx.rollback()
+    if (!section) return trx.rollback()
 
     return [lessons, section.courseId]
   })
